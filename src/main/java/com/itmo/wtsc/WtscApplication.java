@@ -9,5 +9,4 @@ public class WtscApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WtscApplication.class, args);
 	}
-
 }
