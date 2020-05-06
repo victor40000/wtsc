@@ -8,8 +8,5 @@ import java.util.List;
 
 public interface RequestRepository extends CrudRepository<Request, Integer> {
 
-    List<Request> findRequestByStatusIs(RequestStatus status);
-
-    @Override
-    List<Request> findAll();
+    List<Request> findRequestByStatusIn(List<RequestStatus> statuses);
 }

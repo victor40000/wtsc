@@ -26,6 +26,8 @@ public class User {
 
     private String password;
 
+    private boolean active;
+
     @OneToMany(mappedBy = "user")
     private Collection<Request> requests;
 }

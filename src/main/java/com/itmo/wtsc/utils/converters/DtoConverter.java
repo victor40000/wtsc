@@ -1,4 +1,4 @@
-package com.itmo.wtsc.utils.coverters;
+package com.itmo.wtsc.utils.converters;
 
 import com.itmo.wtsc.dto.RequestDto;
 import com.itmo.wtsc.entities.Point;

@@ -1,1 +1,1 @@
-insert into user(id, login, password, role) values (1, "user1", "1", "TOURIST");
+insert into user(id, login, password, role, active) values (1, "user2", "1", "VOLUNTEER", 1);

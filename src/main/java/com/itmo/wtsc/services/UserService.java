@@ -4,6 +4,8 @@ import com.itmo.wtsc.entities.User;
 import com.itmo.wtsc.repositories.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,13 +20,17 @@ public class UserService {
     }
 
     public User getAuthenticatedUser() {
-        String login = "user1";
-        /*Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String login;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
             login = ((UserDetails)principal).getUsername();
         } else {
             login = principal.toString();
-        }*/
-        return getUserRepository().getUserByLoginIs(login);
+        }
+        User user = getUserRepository().getUserByLoginIs(login);
+        if (user == null) {
+            throw new RuntimeException("Couldn't find authenticated user");
+        }
+        return user;
     }
 }
