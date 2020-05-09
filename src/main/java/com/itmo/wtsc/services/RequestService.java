@@ -34,16 +34,19 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final PointRepository pointRepository;
     private final UserService userService;
+    private final GeoService geoService;
 
     @Autowired
-    public RequestService(RequestRepository requestRepository, PointRepository pointRepository, UserService userService) {
+    public RequestService(RequestRepository requestRepository, PointRepository pointRepository, UserService userService, GeoService geoService) {
         this.requestRepository = requestRepository;
         this.pointRepository = pointRepository;
         this.userService = userService;
+        this.geoService = geoService;
     }
 
     public RequestDto createRequest(RequestDto requestDto) {
         User user = userService.getAuthenticatedUser();
+        validateCoordinates(requestDto.getLatitude(), requestDto.getLongitude());
         Point point = getPoint(requestDto);
         Request request = getRequest(requestDto);
         request.setPoint(point);
@@ -107,5 +110,15 @@ public class RequestService {
             return;
         }
         throw new ValidationException(String.format(ErrorMessages.UNCHANGEABLE_REQUEST_ERROR, status));
+    }
+
+    private void validateCoordinates(Double latitude, Double longitude) {
+        if (!geoService.isNationalPark(latitude, longitude)) {
+            throw new ValidationException(String.format(ErrorMessages.COORDINATES_NOT_IN_NATIONAL_PARK_ERROR,
+                    latitude, longitude));
+        }
+        if (!geoService.isLand(latitude, longitude)) {
+            throw new ValidationException(String.format(ErrorMessages.COORDINATES_ON_WATER_ERROR, latitude, longitude));
+        }
     }
 }

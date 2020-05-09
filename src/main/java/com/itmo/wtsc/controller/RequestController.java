@@ -3,6 +3,7 @@ package com.itmo.wtsc.controller;
 import com.itmo.wtsc.dto.NewRequestCase;
 import com.itmo.wtsc.dto.RequestDto;
 import com.itmo.wtsc.dto.UpdateRequestCase;
+import com.itmo.wtsc.osm.OsmRestClient;
 import com.itmo.wtsc.services.RequestService;
 import com.itmo.wtsc.services.UserService;
 import com.itmo.wtsc.utils.enums.RequestStatus;
