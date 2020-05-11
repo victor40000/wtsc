@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -22,12 +23,13 @@ import static com.itmo.wtsc.utils.enums.UserRole.VOLUNTEER;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     private final DataSource dataSource;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
-    public SecurityConfig(DataSource dataSource) {
+    public SecurityConfig(DataSource dataSource, AuthenticationSuccessHandler authenticationSuccessHandler) {
         this.dataSource = dataSource;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
     }
 
     protected void configure(HttpSecurity http) throws Exception {
@@ -40,8 +42,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAnyAuthority(TOURIST.toString(), VOLUNTEER.toString())
                 .antMatchers(HttpMethod.DELETE, "/requests/*")
                     .hasAnyAuthority(TOURIST.toString())
-                .anyRequest().authenticated()
-                .and().httpBasic()
+                .antMatchers("/css/**", "/fonts/**", "/img/**", "/js/**", "/index").permitAll()
+                .anyRequest().authenticated().
+                and()
+                    .formLogin()
+                    .loginPage("/login")
+                    .successHandler(authenticationSuccessHandler)
+                    .permitAll()
+                .and()
+                    .logout()
+                    .permitAll()
+//                .and().httpBasic()
                 .and().csrf().disable();
     }
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login form</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+</head>
+<body>
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="container-fluid" style="font-size: 150%">
+    <div class="box">
+        <h2 class="intro-text text-center">Login page</h2>
+        <br/>
+        <form th:action="@{/login}" method="post" class="text-center">
+            <label> User Name : <input type="text" name="username"/> </label>
+            <label> Password: <input type="password" name="password"/> </label>
+            <input type="submit" class="btn-lg btn-primary" value="Sign In"/>
+        </form>
+        <div th:if="${param.error}" class="text-center">
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}" class="text-center">
+            You have been logged out.
+        </div>
+        <br/>
+    </div>
+</div>
+</body>
+</html>

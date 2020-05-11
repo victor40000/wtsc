@@ -80,6 +80,9 @@ public class RequestService {
     }
 
     public List<RequestDto> getRequests(List<RequestStatus> statuses) {
+        if (statuses == null) {
+            statuses = Arrays.asList(RequestStatus.WAITING, RequestStatus.IN_PROGRESS, RequestStatus.COMPLETED, RequestStatus.CANCELLED);
+        }
         User user = userService.getAuthenticatedUser();
         Predicate<Request> userPredicate = request -> true;
         if (UserRole.TOURIST.equals(user.getRole())) {
