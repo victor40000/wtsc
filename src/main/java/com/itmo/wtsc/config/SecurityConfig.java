@@ -34,6 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers("/tourist")
+                    .hasAnyAuthority(TOURIST.toString())
+                .antMatchers("/volunteer")
+                    .hasAnyAuthority(VOLUNTEER.toString())
                 .antMatchers(HttpMethod.GET, "/requests")
                     .hasAnyAuthority(TOURIST.toString(), VOLUNTEER.toString())
                 .antMatchers(HttpMethod.POST, "/requests")

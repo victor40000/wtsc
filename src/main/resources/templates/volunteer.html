@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Waste transportation system</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+</head>
+<body>
+
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="address-bar"><font color="#6495ed">A cleaning today keeps the landfills away</font></div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">WTS. Request</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li hidden="true">
+                    <a href="index" id="menu_about" style="visibility: hidden">About us</a>
+                </li>
+                <li>
+                    <a href="request" id="menu_request" style="visibility: hidden">Make request</a>
+                </li>
+                <li>
+                    <a href="crewman" id="menu_crewman" style="visibility: hidden">Boat page</a>
+                </li>
+                <li>
+                    <a href="statistics" id="menu_statistics" style="visibility: hidden">Statistics page</a>
+                </li>
+                <li>
+                    <form th:action="@{/logout}" method="post">
+                        <br/>
+                        <input type="submit" class="btn-lg btn-primary" value="Sign Out"/>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!--<div class="container-fluid" style="font-size: 150%">
+    <div class="box">
+        <form>
+            <div class="form-group row">
+                <h2 class="intro-text text-center">Garbage collection request</h2>
+
+                <br>
+                <div class="col-sm-7 text-center">
+                    <div class="form-group col">
+                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
+                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
+                        <input type="text" hidden class="form-control-plaintext" id="requestId" value="0">
+                    </div>
+                    <br/>
+                    <div id="map" style="height: 400px;"></div>
+                </div>
+
+                <div class="col-sm-4 text-left" id="controlLayer">
+                    <div class="row">
+                        <button type="button" class="btn-lg btn-primary mb-2" id="submit" onclick="postPoint()">Submit
+                        </button>
+                        <button type="button" class="btn-lg btn-primary mb-2" id="update" onclick="updatePoint()">Update
+                        </button>
+                        <button type="button" class="btn-lg btn-primary mb-2" id="delete" onclick="deletePoint()">Delete
+                        </button>
+                        <button type="button" class="btn-lg btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel
+                        </button>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <label for="type">Dump type</label>
+                        <select id="type" class="form-control input-lg">
+                            <option selected>MIXED</option>
+                            <option>SOLID</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label for="size">Dump size in packages</label>
+                        <input type="text" class="form-control input-lg" id="size" placeholder="1" value="1">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>-->
+
+<div class="container-fluid" style="font-size: 150%">
+    <div class="box">
+        <form>
+            <div class="form-group col">
+                <h3 class="intro-text text-center">Statistics
+                </h3>
+                <br>
+                <div class="col-sm-7 text-center">
+                    <div class="form-group col">
+                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
+                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
+                        <input type="text" hidden class="form-control-plaintext" id="requestId" value="0">
+                    </div>
+                    <br/>
+                    <div id="map" style="height: 400px;"></div>
+                </div>
+
+                <div class="container col-sm-4" style="margin-top: 25px">
+                    <div class="tab-content" id="panel1" style="display: inline">
+                        <div class="tab-pane fade in active" style="margin-top: 25px">
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Dump type</label>
+                                <div class="col-sm-7">
+                                    <select id="dumpType" class="form-control input-lg">
+                                        <option selected>ALL</option>
+                                        <option>SOLID</option>
+                                        <option>ORGANIC</option>
+                                        <option>MIXED</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Max dump size</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control input-lg" id="dumpMaxSize" placeholder="none">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <label class="col-sm-5">Dump Status</label>
+                                <div class="col-sm-7">
+                                    <select id="type_get" class="form-control input-lg">
+                                        <option selected>WAITING</option>
+                                        <option>IN_PROGRESS</option>
+                                        <option>COMPLETED</option>
+                                        <option>CANCELLED</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row text-center" style="margin-top: 25px">
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="getPoints()">Get dumps
+                                </button>
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onClear()">Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="panel2" style="display: none">
+                        <div class="tab-pane fade in active" style="margin-top: 25px">
+                            <div class="row">
+                                <label class="col-sm-5">Dump Status</label>
+                                <div class="col-sm-7">
+                                    <select id="type_upd" class="form-control input-lg">
+                                        <option selected>WAITING</option>
+                                        <option>IN_PROGRESS</option>
+                                        <option>COMPLETED</option>
+                                        <option>CANCELLED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row" style="margin-top: 25px">
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="updatePoint()">Update request
+                                </button>
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onCancel()">Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="box">
+        <textarea readonly class="form-control rounded-0" id="answer" rows="5"
+                  placeholder="Answer information"></textarea>
+        <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // Create map
+    var map = L.map('map').setView([61.2302, 30.0495], 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Create layer group to draw markers
+    var markerGroup = L.layerGroup().addTo(map);
+
+    // Save all markers to provide it's id
+    var markers = {};
+    var requests = {};
+
+    //
+    var blockMarkers = false;
+
+    // Get interface elements
+    var longitude = document.getElementById('longitude');
+    var latitude = document.getElementById('latitude');
+    var dumpType = document.getElementById('type');
+    var dumpSize = document.getElementById('size');
+    var submitButton = document.getElementById('submit');
+    var cancelButton = document.getElementById('cancel');
+    var updateButton = document.getElementById('update');
+    var deleteButton = document.getElementById('delete');
+    var answer = document.getElementById('answer');
+    var requestId = document.getElementById('requestId');
+    var enableTap = true;
+    var updPanel = document.getElementById('panel2');
+    var getPanel = document.getElementById('panel1');
+    var updStatus = document.getElementById('type_upd');
+
+    function setUpdEnabled(status) {
+        if (status == true) {
+            updPanel.style.display = "inline";
+            getPanel.style.display = "none";
+        } else {
+            getPanel.style.display = "inline";
+            updPanel.style.display = "none";
+        }
+    }
+
+    // Function to lock/unlock control page elements
+    function setControlEnabled(status) {
+        if (status == true) {
+            dumpSize.disabled = false;
+            dumpType.disabled = false;
+            submitButton.style.display = "inline";
+            cancelButton.style.display = "inline";
+        } else {
+            dumpSize.disabled = true;
+            dumpType.disabled = true;
+            submitButton.style.display = "none";
+            cancelButton.style.display = "none";
+        }
+    }
+
+    function setUpdateControlEnabled(status) {
+        if (status == true) {
+            dumpSize.disabled = false;
+            dumpType.disabled = false;
+            updateButton.style.display = "inline";
+            deleteButton.style.display = "inline";
+            cancelButton.style.display = "inline";
+        } else {
+            dumpSize.disabled = true;
+            dumpType.disabled = true;
+            updateButton.style.display = "none";
+            deleteButton.style.display = "none";
+            cancelButton.style.display = "none";
+        }
+    }
+
+    // setControlEnabled(false);
+    // setUpdateControlEnabled(false);
+
+    // Function to lock/unlock map
+    function setMapEnabled(status) {
+        if (status == true) {
+
+            map.dragging.enable();
+            map.touchZoom.enable();
+            map.doubleClickZoom.enable();
+            map.scrollWheelZoom.enable();
+            map.boxZoom.enable();
+            map.keyboard.enable();
+            enableTap = true;
+
+            latitude.disabled = false;
+            longitude.disabled = false;
+        } else {
+
+            map.dragging.disable();
+            map.touchZoom.disable();
+            map.doubleClickZoom.disable();
+            map.scrollWheelZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+            enableTap = false;
+
+            latitude.disabled = true;
+            longitude.disabled = true;
+        }
+    }
+
+    function printAnswer(value) {
+        answer.value = answer.value + '\n' + value;
+        answer.scrollTop = answer.scrollHeight;
+    }
+
+    function setDefaulValues() {
+        latitude.value = 'Latitude';
+        longitude.value = 'Longitude';
+    }
+
+    function onCancel() {
+        setUpdEnabled(false)
+        setMapEnabled(true);
+        blockMarkers = false;
+    }
+
+    function onClearLog() {
+        answer.value = '';
+        answer.scrollTop = answer.scrollHeight;
+    }
+
+    function onClear() {
+        requests = [];
+        markers = [];
+        markerGroup.clearLayers();
+    }
+
+    function selectMarker(e) {
+
+        if (!blockMarkers) {
+            var markerTempId = this._leaflet_id;
+            var objectId = -1;
+            markers.forEach(function (item, index, array) {
+                if (markerTempId == markers[index]._leaflet_id) {
+                    objectId = index;
+                }
+            });
+            if (objectId != -1) {
+                item = requests[objectId];
+                setUpdEnabled(true);
+                setMapEnabled(false);
+                blockMarkers = true;
+                requestId.value = item.id;
+                latitude.value = item.latitude;
+                longitude.value = item.longitude;
+            }
+        } else {
+            alert('Please apply or cancel your order before select a new marker');
+            printAnswer('Please apply or cancel your order before select a new marker');
+        }
+    }
+
+    var updatePoint = function () {
+        item = requests[requestId.value];
+        console.log(requestId.value);
+        console.log(requests);
+        $.ajax({
+            type: 'PUT',
+            url: '/requests/' + requestId.value,
+            data: JSON.stringify({
+                'status': updStatus.value,
+                'dumpType': item.dumpType,
+                'size': item.size
+            }),
+            contentType: 'application/json',
+            async: true,
+            success: function (result) {
+                printAnswer('Point was updated');
+                setUpdEnabled(false);
+                setMapEnabled(true);
+                markerGroup.clearLayers();
+                blockMarkers = false;
+                getPoints();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Cannot update dump. See error in log.');
+                printAnswer('Update dump error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    }
+
+
+
+    var getPoints = function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'requests',
+            contentType: 'application/json',
+            async: true,
+            success: function (result) {
+
+                // var obj = JSON.parse(result);
+                requests = [];
+                markers = [];  //clear markers structure
+                result.forEach(function (item, index, array) {
+
+                    markers[item.id] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
+                        .bindPopup("<b>Dump point</b>"
+                            + "<br/>Type: " + item.dumpType
+                            + "<br/>Size: " + item.size
+                            + "<br/>Status: " + item.status)
+                        .on('click', selectMarker);
+                    requests[item.id] = item;
+                });
+                console.log(markers);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Could not get dumps. See error in log.');
+                printAnswer('Get dumps error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    }
+
+    getPoints();
+
+
+    var menu_about = document.getElementById('menu_about');
+    var menu_request = document.getElementById('menu_request');
+    var menu_crewman = document.getElementById('menu_crewman');
+    var menu_statistics = document.getElementById('menu_statistics');
+
+    var menuManagement = function () {
+        $.ajax({
+            type: 'GET',
+            url: 'user_role/',
+            contentType: "application/json",
+            async: true,
+            success: function (result) {
+                role = result;
+                console.log(role);
+                if (role == 'TOURIST') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'CREWMAN') {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "visible";
+                    menu_statistics.style.visibility = "hidden";
+                } else if (role == 'ADMIN') {
+                    menu_about.style.visibility = "visible";
+                    // change link to align them
+                    menu_request.href = "statistics";
+                    menu_request.text = "statistics page";
+                    menu_request.style.visibility = "visible";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                } else {
+                    menu_about.style.visibility = "visible";
+                    menu_request.style.visibility = "hidden";
+                    menu_crewman.style.visibility = "hidden";
+                    menu_statistics.style.visibility = "hidden";
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('Get sushi role error: ' +
+                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            }
+        });
+    };
+
+    // menuManagement();
+
+
+</script>
+
+</body>
+</html>
