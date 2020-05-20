@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
+
 import static com.itmo.wtsc.utils.ErrorMessages.FIELD_NULL_ERROR;
 
 @EqualsAndHashCode(callSuper = true)
@@ -26,5 +28,7 @@ public class RequestDto extends PointDto {
     @NotNull(groups = {NewRequestCase.class, UpdateRequestCase.class}, message = FIELD_NULL_ERROR)
     private Integer size;
 
+    private LocalDateTime createdWhen;
+    
     private String description;
 }

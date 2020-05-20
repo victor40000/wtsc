@@ -2,14 +2,17 @@ package com.itmo.wtsc.controller;
 
 import com.itmo.wtsc.dto.NewRequestCase;
 import com.itmo.wtsc.dto.RequestDto;
+import com.itmo.wtsc.dto.RequestFilter;
 import com.itmo.wtsc.dto.UpdateRequestCase;
 import com.itmo.wtsc.osm.OsmRestClient;
 import com.itmo.wtsc.services.RequestService;
 import com.itmo.wtsc.services.UserService;
+import com.itmo.wtsc.utils.enums.DumpType;
 import com.itmo.wtsc.utils.enums.RequestStatus;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,8 +51,13 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @Transactional
-    public List<RequestDto> getRequests(@RequestParam(name = "statuses", required = false) List<RequestStatus> statuses) {
-        return getRequestService().getRequests(statuses);
+    public List<RequestDto> getRequests(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+                                        @RequestParam(required = false) List<DumpType> dumpTypes,
+                                        @RequestParam(required = false) Integer maxSize,
+                                        @RequestParam(required = false) List<RequestStatus> statuses) {
+        RequestFilter filter = new RequestFilter(statuses, dumpTypes, maxSize, startDate, endDate);
+        return getRequestService().getRequests(filter);
     }
 
     @RequestMapping(value = "/requests/{id}", method = RequestMethod.PUT)

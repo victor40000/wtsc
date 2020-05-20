@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -25,6 +26,8 @@ public class Request {
     private Integer size;
 
     private String description;
+
+    private LocalDateTime createdWhen;
 
     @ManyToOne
     private User user;

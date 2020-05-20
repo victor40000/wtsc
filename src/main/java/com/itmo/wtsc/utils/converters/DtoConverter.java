@@ -30,6 +30,7 @@ public class DtoConverter {
         requestDto.setLatitude(point.getLatitude());
         requestDto.setLongitude(point.getLongitude());
         requestDto.setId(request.getId());
+        requestDto.setCreatedWhen(request.getCreatedWhen());
         return requestDto;
     }
 }
