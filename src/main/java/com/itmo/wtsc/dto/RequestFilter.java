@@ -4,11 +4,13 @@ import com.itmo.wtsc.utils.enums.DumpType;
 import com.itmo.wtsc.utils.enums.RequestStatus;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+@ToString
 @Getter
 @Setter
 public class RequestFilter {

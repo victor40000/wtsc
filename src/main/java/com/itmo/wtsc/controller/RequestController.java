@@ -10,6 +10,7 @@ import com.itmo.wtsc.services.UserService;
 import com.itmo.wtsc.utils.enums.DumpType;
 import com.itmo.wtsc.utils.enums.RequestStatus;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+@Log4j2
 @Controller
 public class RequestController {
 
@@ -44,6 +46,7 @@ public class RequestController {
     @ResponseBody
     @Transactional
     public RequestDto addRequest(@Validated(NewRequestCase.class) @RequestBody RequestDto requestDto) {
+        log.info("request for adding request received:\n" + requestDto);
         return getRequestService().createRequest(requestDto);
     }
 
@@ -57,6 +60,7 @@ public class RequestController {
                                         @RequestParam(required = false) Integer maxSize,
                                         @RequestParam(required = false) List<RequestStatus> statuses) {
         RequestFilter filter = new RequestFilter(statuses, dumpTypes, maxSize, startDate, endDate);
+        log.info("request for getting requests received:\n" + filter);
         return getRequestService().getRequests(filter);
     }
 
@@ -67,6 +71,7 @@ public class RequestController {
     public RequestDto updateRequest(@PathVariable Integer id,
                               @Validated(UpdateRequestCase.class) @RequestBody RequestDto requestDto) {
         requestDto.setId(id);
+        log.info("request for updating request received:\n" + requestDto);
         return getRequestService().updateRequest(requestDto);
     }
 
@@ -75,6 +80,7 @@ public class RequestController {
     @ResponseBody
     @Transactional
     public void deleteRequest(@PathVariable Integer id) {
+        log.info("request for deleting request received: " + id);
         getRequestService().deleteRequest(id);
     }
 
