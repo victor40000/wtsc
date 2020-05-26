@@ -13,12 +13,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class RequestServiceTest {
 
-    private static TestConfig testConfig;
 
-    @BeforeAll
-    public static void initializeConfig() {
-        testConfig = new TestConfig();
-    }
 
     @Test
     public void testAddRequest() {

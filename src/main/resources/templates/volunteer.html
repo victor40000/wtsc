@@ -132,9 +132,10 @@
                                 <div class="col-sm-7">
                                     <select id="dumpType" class="form-control input-lg">
                                         <option selected>ALL</option>
-                                        <option>SOLID</option>
-                                        <option>ORGANIC</option>
                                         <option>MIXED</option>
+                                        <option>SOLID</option>
+                                        <option>HOUSEHOLD</option>
+                                        <option>LIQUID</option>
                                     </select>
                                 </div>
                             </div>
@@ -142,19 +143,34 @@
                             <div class="form-group row">
                                 <label class="col-sm-5">Max dump size</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control input-lg" id="dumpMaxSize" placeholder="none">
+                                    <input type="text" class="form-control input-lg" id="dumpMaxSize" placeholder="none" value="100">
                                 </div>
                             </div>
 
                             <div class="row">
                                 <label class="col-sm-5">Dump Status</label>
                                 <div class="col-sm-7">
-                                    <select id="type_get" class="form-control input-lg">
-                                        <option selected>WAITING</option>
+                                    <select id="dumpStatus" class="form-control input-lg">
+                                        <option selected>ALL</option>
+                                        <option>WAITING</option>
                                         <option>IN_PROGRESS</option>
                                         <option>COMPLETED</option>
                                         <option>CANCELLED</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">Start date</label>
+                                <div class="col-sm-7">
+                                    <input type="datetime-local" class="form-control input-lg" id="startDate" placeholder="none" value="2017-06-01T08:30">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5">End date</label>
+                                <div class="col-sm-7">
+                                    <input type="datetime-local" class="form-control input-lg" id="endDate" placeholder="none" value="2021-06-01T08:30">
                                 </div>
                             </div>
 
@@ -223,8 +239,9 @@
     // Get interface elements
     var longitude = document.getElementById('longitude');
     var latitude = document.getElementById('latitude');
-    var dumpType = document.getElementById('type');
-    var dumpSize = document.getElementById('size');
+    var dumpType = document.getElementById('dumpType');
+    var dumpStatus = document.getElementById('dumpStatus');
+    var dumpSize = document.getElementById('dumpMaxSize');
     var submitButton = document.getElementById('submit');
     var cancelButton = document.getElementById('cancel');
     var updateButton = document.getElementById('update');
@@ -235,6 +252,8 @@
     var updPanel = document.getElementById('panel2');
     var getPanel = document.getElementById('panel1');
     var updStatus = document.getElementById('type_upd');
+    var startDate = document.getElementById('startDate');
+    var endDate = document.getElementById('endDate');
 
     function setUpdEnabled(status) {
         if (status == true) {
@@ -394,17 +413,36 @@
 
 
     var getPoints = function () {
-
+        var currStatus = dumpStatus.value;
+        var currType = dumpType.value;
+        if (currType === "ALL") {
+            console.log("curr type = all");
+            currType = undefined;
+            console.log(currType);
+        }
+        if (currStatus === "ALL") {
+            console.log("curr status = all");
+            currStatus = undefined;
+            console.log(currStatus);
+        }
         $.ajax({
             type: 'GET',
             url: 'requests',
             contentType: 'application/json',
+            data: {
+                "dumpTypes": currType,
+                "statuses": currStatus,
+                "maxSize": dumpSize.value,
+                "startDate": startDate.value,
+                "endDate": endDate.value
+            },
             async: true,
             success: function (result) {
 
                 // var obj = JSON.parse(result);
                 requests = [];
-                markers = [];  //clear markers structure
+                markers = [];  //clear markers struct
+                markerGroup.clearLayers();
                 result.forEach(function (item, index, array) {
 
                     markers[item.id] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
@@ -416,6 +454,7 @@
                     requests[item.id] = item;
                 });
                 console.log(markers);
+                console.log(dumpSize.value);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert('Could not get dumps. See error in log.');
