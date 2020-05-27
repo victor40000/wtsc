@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.itmo.wtsc.utils.ErrorMessages.REQUEST_ALREADY_EXISTS;
 import static com.itmo.wtsc.utils.converters.DtoConverter.*;
 
 @Service
@@ -127,12 +128,14 @@ public class RequestService {
     }
 
     private void validateCoordinates(Double latitude, Double longitude) {
-        if (!geoService.isNationalPark(latitude, longitude)) {
-            throw new ValidationException(String.format(ErrorMessages.COORDINATES_NOT_IN_NATIONAL_PARK_ERROR,
-                    latitude, longitude));
-        }
-        if (!geoService.isLand(latitude, longitude)) {
-            throw new ValidationException(String.format(ErrorMessages.COORDINATES_ON_WATER_ERROR, latitude, longitude));
-        }
+        geoService.validateCoordinates(latitude, longitude);
+        List<Request> requests = requestRepository
+                .findRequestByStatusIn(Arrays.asList(RequestStatus.WAITING, RequestStatus.IN_PROGRESS));
+        requests.stream()
+                .filter(req -> geoService.isRadiusIntersecting(latitude, longitude, req.getPoint().getLatitude(),
+                        req.getPoint().getLongitude()))
+                .findFirst().ifPresent(a -> {
+            throw new ValidationException(REQUEST_ALREADY_EXISTS);
+        });
     }
 }

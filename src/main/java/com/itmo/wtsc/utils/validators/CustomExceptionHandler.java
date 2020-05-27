@@ -41,7 +41,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     protected ResponseEntity<Object> handleValidationError(ValidationException ex, WebRequest request) {
         return handleExceptionInternal(ex, getBody(Collections.singletonList(ex.getMessage())),
-                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     private Map<String, Object> getBody(List<String> errors) {

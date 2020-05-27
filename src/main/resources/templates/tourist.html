@@ -100,6 +100,10 @@
                         <label for="size">Dump size in packages</label>
                         <input type="text" class="form-control input-lg" id="size" placeholder="1" value="1">
                     </div>
+                    <div class="row">
+                        <label for="size">Description</label>
+                        <input type="text" class="form-control input-lg" id="descr" placeholder="1" value="1">
+                    </div>
                 </div>
             </div>
         </form>
@@ -138,6 +142,7 @@
     var latitude = document.getElementById('latitude');
     var dumpType = document.getElementById('type');
     var dumpSize = document.getElementById('size');
+    var descr = document.getElementById('descr');
     var submitButton = document.getElementById('submit');
     var cancelButton = document.getElementById('cancel');
     var updateButton = document.getElementById('update');
@@ -151,11 +156,13 @@
         if (status == true) {
             dumpSize.disabled = false;
             dumpType.disabled = false;
+            descr.disabled = false;
             submitButton.style.display = "inline";
             cancelButton.style.display = "inline";
         } else {
             dumpSize.disabled = true;
             dumpType.disabled = true;
+            descr.disabled = true;
             submitButton.style.display = "none";
             cancelButton.style.display = "none";
         }
@@ -165,12 +172,14 @@
         if (status == true) {
             dumpSize.disabled = false;
             dumpType.disabled = false;
+            descr.disabled = false;
             updateButton.style.display = "inline";
             deleteButton.style.display = "inline";
             cancelButton.style.display = "inline";
         } else {
             dumpSize.disabled = true;
             dumpType.disabled = true;
+            descr.disabled = true;
             updateButton.style.display = "none";
             deleteButton.style.display = "none";
             cancelButton.style.display = "none";
@@ -282,6 +291,7 @@
                 longitude.value = item.longitude;
                 dumpSize.value = item.size;
                 dumpType.value = item.dumpType;
+                descr.value = item.description;
             }
         } else {
             alert('Please apply or cancel your order before select a new marker');
@@ -300,7 +310,8 @@
                     'longitude': longitude.value,
                     'latitude': latitude.value,
                     'dumpType': dumpType.value,
-                    'size': dumpSize.value
+                    'size': dumpSize.value,
+                    'description': descr.value
                 }),
                 contentType: 'application/json',
                 async: true,
@@ -333,7 +344,8 @@
             data: JSON.stringify({
                 'dumpType': dumpType.value,
                 'size': dumpSize.value,
-                'status': 'WAITING'
+                'status': 'WAITING',
+                'description': descr.value
             }),
             contentType: 'application/json',
             async: true,
@@ -403,7 +415,8 @@
                         .bindPopup("<b>Dump point</b>"
                             + "<br/>Type: " + item.dumpType
                             + "<br/>Size: " + item.size
-                            + "<br/>Status: " + item.status)
+                            + "<br/>Status: " + item.status
+                            + "<br/>Description: " + item.description)
                         .on('click', selectMarker);
                     requests[item.id] = item;
                 });

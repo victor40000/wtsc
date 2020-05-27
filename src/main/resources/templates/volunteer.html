@@ -449,7 +449,8 @@
                         .bindPopup("<b>Dump point</b>"
                             + "<br/>Type: " + item.dumpType
                             + "<br/>Size: " + item.size
-                            + "<br/>Status: " + item.status)
+                            + "<br/>Status: " + item.status
+                            + "<br/>Description: " + item.description)
                         .on('click', selectMarker);
                     requests[item.id] = item;
                 });
