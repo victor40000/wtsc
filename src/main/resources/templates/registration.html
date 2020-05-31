@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login form</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+</head>
+<body>
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="container-fluid" style="font-size: 150%">
+    <div class="box">
+        <form action="/login" method="get">
+            <input type="submit" class="btn-lg btn-primary" value ="Login"/>
+        </form>
+        <h2 class="intro-text text-center">Registration page</h2>
+        <br/>
+        <form class="text-center">
+            <label> User Name : <input type="text" name="login" id="login"/> </label>
+            <label> Password: <input type="password" id="password" required> </label>
+            <label> Confirm Password: <input type="password" id="confirm_password" required> </label>
+            <input type="button" class="btn-lg btn-primary" value="Register" onclick="postUser()"/>
+            <div class="row">
+                <label for="role">User role</label>
+                <select id="role" class="form-control input-lg">
+                    <option selected>TOURIST</option>
+                    <option>VOLUNTEER</option>
+                </select>
+            </div>
+        </form>
+        <br/>
+    </div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    var login = document.getElementById("login")
+    var passw = document.getElementById("password")
+    var passw_conf = document.getElementById("confirm_password")
+    var role = document.getElementById("role")
+
+    var postUser = function () {
+        if (passw.value !== passw_conf.value) {
+            alert('Passwords do not match');
+            return;
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/registration',
+                data: JSON.stringify({
+                    'login': login.value,
+                    'password': passw.value,
+                    'role': role.value
+                }),
+                success: function(result) {
+                    window.location.replace("/login");
+                },
+                contentType: 'application/json',
+                sync: true,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseText);
+                    alert(jqXHR.responseText);
+                }
+            });
+        }
+
+    }
+</script>
+</body>
+</html>

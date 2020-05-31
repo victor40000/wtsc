@@ -26,6 +26,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final DataSource dataSource;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
+    @Bean(name = "wtsc.encoder")
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder(8);
+    }
+
     @Autowired
     public SecurityConfig(DataSource dataSource, AuthenticationSuccessHandler authenticationSuccessHandler) {
         this.dataSource = dataSource;
@@ -46,7 +51,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAnyAuthority(TOURIST.toString(), VOLUNTEER.toString())
                 .antMatchers(HttpMethod.DELETE, "/requests/*")
                     .hasAnyAuthority(TOURIST.toString())
-                .antMatchers("/css/**", "/fonts/**", "/img/**", "/js/**", "/index").permitAll()
+                .antMatchers(HttpMethod.PUT, "/users/*")
+                    .hasAnyAuthority(VOLUNTEER.toString())
+                .antMatchers(HttpMethod.GET, "/users/*")
+                    .hasAnyAuthority(VOLUNTEER.toString())
+                .antMatchers("/css/**", "/fonts/**", "/img/**", "/js/**", "/index", "/registration").permitAll()
                 .anyRequest().authenticated().
                 and()
                     .formLogin()
@@ -64,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
-                .passwordEncoder(NoOpPasswordEncoder.getInstance())
+                .passwordEncoder(getPasswordEncoder())
                 .usersByUsernameQuery("select login, password, active from user where login=?")
                 .authoritiesByUsernameQuery("select login, role from user where login=?");
     }

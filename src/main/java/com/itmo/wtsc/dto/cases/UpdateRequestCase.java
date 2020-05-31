@@ -1,4 +1,4 @@
-package com.itmo.wtsc.dto;
+package com.itmo.wtsc.dto.cases;
 
 public interface UpdateRequestCase {
 }

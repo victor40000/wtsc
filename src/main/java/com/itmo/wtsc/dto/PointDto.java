@@ -1,5 +1,6 @@
 package com.itmo.wtsc.dto;
 
+import com.itmo.wtsc.dto.cases.NewRequestCase;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

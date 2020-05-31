@@ -13,6 +13,9 @@
 <div class="brand"><font color="#6495ed">Waste transportation service</font></div>
 <div class="container-fluid" style="font-size: 150%">
     <div class="box">
+        <form action="/registration" method="get">
+            <input type="submit" class="btn-lg btn-primary" value ="Register"/>
+        </form>
         <h2 class="intro-text text-center">Login page</h2>
         <br/>
         <form th:action="@{/login}" method="post" class="text-center">
@@ -20,6 +23,7 @@
             <label> Password: <input type="password" name="password"/> </label>
             <input type="submit" class="btn-lg btn-primary" value="Sign In"/>
         </form>
+
         <div th:if="${param.error}" class="text-center">
             Invalid username and password.
         </div>

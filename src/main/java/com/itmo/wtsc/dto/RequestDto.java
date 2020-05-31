@@ -1,13 +1,14 @@
 package com.itmo.wtsc.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.itmo.wtsc.dto.cases.NewRequestCase;
+import com.itmo.wtsc.dto.cases.UpdateRequestCase;
 import com.itmo.wtsc.utils.enums.DumpType;
 import com.itmo.wtsc.utils.enums.RequestStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;

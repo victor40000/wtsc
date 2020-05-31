@@ -1,10 +1,9 @@
 package com.itmo.wtsc.controller;
 
-import com.itmo.wtsc.dto.NewRequestCase;
+import com.itmo.wtsc.dto.cases.NewRequestCase;
 import com.itmo.wtsc.dto.RequestDto;
 import com.itmo.wtsc.dto.RequestFilter;
-import com.itmo.wtsc.dto.UpdateRequestCase;
-import com.itmo.wtsc.osm.OsmRestClient;
+import com.itmo.wtsc.dto.cases.UpdateRequestCase;
 import com.itmo.wtsc.services.RequestService;
 import com.itmo.wtsc.services.UserService;
 import com.itmo.wtsc.utils.enums.DumpType;
@@ -12,17 +11,14 @@ import com.itmo.wtsc.utils.enums.RequestStatus;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @Log4j2
