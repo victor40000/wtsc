@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Waste transportation system</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/business-casual.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+</head>
+<body>
+
+<div class="brand"><font color="#6495ed">Waste transportation service</font></div>
+<div class="address-bar"><font color="#6495ed">A cleaning today keeps the landfills away</font></div>
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">WTS. Request</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="volunteer" id="menu_request" style="visibility: visible">Requests</a>
+                </li>
+                <li>
+                    <a href="statistic" id="menu_statistics" style="visibility: visible">Statistics</a>
+                </li>
+                <li>
+                    <a href="user_management" id="user_management" style="visibility: visible">User Management</a>
+                </li>
+                <li>
+                    <form th:action="@{/logout}" method="post">
+                        <br/>
+                        <input type="submit" class="btn-lg btn-primary" value="Sign Out"/>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid" style="font-size: 150%">
+    <div class="box">
+        <form>
+            <div class="form-group col">
+                <h3 class="intro-text text-center">User Management
+                </h3>
+                <br>
+                <ul class="list-group text-center" id="users">
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    var users = document.getElementById("users");
+
+    function initTable() {
+        let node = document.createElement("LI")
+        let login = document.createElement("DIV");
+        login.className = "col-lg-1";
+        login.textContent = "Login";
+        let active = document.createElement("DIV");
+        active.className = "col-lg-2";
+        active.textContent = "Is active";
+        node.appendChild(login);
+        node.appendChild(active);
+        node.className = "nav-header disabled";
+        users.appendChild(node);
+    }
+
+    function updateUser(id, active) {
+        $.ajax({
+            type: 'PUT',
+            url: '/users/' + id,
+            data: JSON.stringify({
+                'active': active
+            }),
+            contentType: 'application/json',
+            async: true,
+            success: function (result) {
+                getUsers();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Cannot update user: ' + jqXHR.responseText);
+            }
+        });
+    }
+
+    function getUsers() {
+        $.ajax({
+            type: 'GET',
+            url: 'users',
+            contentType: 'application/json',
+            async: true,
+            success: function (result) {
+                console.log(result);
+                users.innerHTML = '';
+                initTable();
+                result.forEach(function (item, index, array) {
+                    let node = document.createElement("LI");
+
+                    let login = document.createElement("DIV");
+                    login.className = "col-lg-1";
+                    login.textContent = item.login;
+                    let active = document.createElement("DIV");
+                    active.className = "col-lg-2";
+                    active.textContent = item.active;
+                    let btnActivate = document.createElement("BUTTON");
+                    btnActivate.onclick = function(){
+                        updateUser(item.id, true);
+                        return false;
+                    };
+                    btnActivate.className = "btn-lg btn-primary offset-md-3";
+                    btnActivate.textContent = "Activate";
+                    btnActivate.type = "button";
+                    let btnDisable = document.createElement("BUTTON");
+                    btnDisable.onclick = function(){
+                        updateUser(item.id, false);
+                        return false;
+                    };
+                    btnDisable.className = "btn-lg btn-primary offset-md-3";
+                    btnDisable.textContent = "Disable";
+                    btnDisable.type = "button";
+
+                    node.appendChild(login);
+                    node.appendChild(active);
+                    node.appendChild(btnActivate);
+                    node.appendChild(btnDisable);
+                    node.className = "row list-group-item";
+                    users.appendChild(node);
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Could not get users:' + jqXHR.responseText);
+            }
+        });
+    }
+
+
+
+    getUsers();
+
+</script>
+
+</body>
+</html>

@@ -52,6 +52,7 @@ public class UserService {
 
     public List<UserDto> getUsers() {
         return userRepository.findAll().stream()
+                .filter(user -> !Objects.equals(user.getId(), getAuthenticatedUser().getId()))
                 .map(this::getUserDto)
                 .collect(Collectors.toList());
     }
