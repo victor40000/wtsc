@@ -17,19 +17,34 @@
         </form>
         <h2 class="intro-text text-center">Registration page</h2>
         <br/>
-        <form class="text-center">
-            <label> User Name : <input type="text" name="login" id="login"/> </label>
-            <label> Password: <input type="password" id="password" required> </label>
-            <label> Confirm Password: <input type="password" id="confirm_password" required> </label>
-            <input type="button" class="btn-lg btn-primary" value="Register" onclick="postUser()"/>
-            <div class="row">
-                <label for="role">User role</label>
-                <select id="role" class="form-control input-lg">
-                    <option selected>TOURIST</option>
-                    <option>VOLUNTEER</option>
-                </select>
-            </div>
-        </form>
+        <div class="container" style="width: 30vw">
+            <form class="text-center">
+                <div class="form-group">
+                    <label for="login"> User Name: </label>
+                    <input type="text" class="form-control" name="login" id="login"/>
+                </div>
+                <div class="form-group">
+                    <label for="email"> Email: </label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password"> Password:</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="password"> Confirm Password:</label>
+                    <input type="password" class="form-control" id="confirm_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">User role</label>
+                    <select id="role" class="form-control input-md">
+                        <option selected>TOURIST</option>
+                        <option>VOLUNTEER</option>
+                    </select>
+                </div>
+                <input type="button" class="btn-lg btn-primary" style="margin-top: 30px" value="Register" onclick="postUser()"/>
+            </form>
+        </div>
         <br/>
     </div>
 </div>
