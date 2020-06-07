@@ -3,11 +3,10 @@ package com.itmo.wtsc.entities;
 import com.itmo.wtsc.utils.enums.DumpType;
 import com.itmo.wtsc.utils.enums.RequestStatus;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Data
 @Entity
@@ -34,4 +33,9 @@ public class Request {
 
     @OneToOne
     private Point point;
+
+    @OneToMany(mappedBy = "request")
+    private Collection<RequestChange> requestChanges;
+
+    private boolean archived;
 }

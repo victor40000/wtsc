@@ -4,8 +4,10 @@ import com.itmo.wtsc.dto.RequestDto;
 import com.itmo.wtsc.dto.RequestFilter;
 import com.itmo.wtsc.entities.Point;
 import com.itmo.wtsc.entities.Request;
+import com.itmo.wtsc.entities.RequestChange;
 import com.itmo.wtsc.entities.User;
 import com.itmo.wtsc.repositories.PointRepository;
+import com.itmo.wtsc.repositories.RequestChangeRepository;
 import com.itmo.wtsc.repositories.RequestRepository;
 import com.itmo.wtsc.services.GeoService;
 import com.itmo.wtsc.services.RequestService;
@@ -24,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +57,9 @@ public class RequestServiceTest {
     public PointRepository pointRepository;
 
     @MockBean
+    public RequestChangeRepository requestChangeRepository;
+
+    @MockBean
     public UserService userService;
 
     @MockBean
@@ -77,14 +83,15 @@ public class RequestServiceTest {
         when(geoService.isNationalPark(any(), any())).thenReturn(true);
         when(geoService.isLand(any(), any())).thenReturn(true);
         when(userService.getAuthenticatedUser()).thenReturn(getAuthUser());
-        when(requestRepository.findById(any())).thenReturn(Optional.of(getCurrRequest()));
-        when(requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetween(any(), any(), any(), any(), any()))
+        when(requestRepository.findByIdAndArchivedIsFalse(any())).thenReturn(Optional.of(getCurrRequest()));
+        when(requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndAndArchivedIsFalse(any(), any(), any(), any(), any()))
                 .thenReturn(getRequestTestList());
         when(pointRepository.save(any(Point.class))).thenAnswer(elem -> {
             Point point = (Point) elem.getArgument(0);
             point.setId(1);
             return point;
         });
+        when(requestChangeRepository.save(any(RequestChange.class))).thenAnswer(elem -> new RequestChange());
         when(requestRepository.save(any(Request.class))).thenAnswer(elem -> {
             Request request = (Request) elem.getArgument(0);
             request.setId(1);
@@ -160,7 +167,7 @@ public class RequestServiceTest {
 
     @Test
     void testUpdateRequestNonExistingRequest() {
-        when(requestRepository.findById(any())).thenReturn(Optional.empty());
+        when(requestRepository.findByIdAndArchivedIsFalse(any())).thenReturn(Optional.empty());
         changeCurrRequest(1, RequestStatus.WAITING, DumpType.MIXED, 24, 1, null);
         RequestDto request = getDto();
         request.setStatus(RequestStatus.COMPLETED);
@@ -328,6 +335,8 @@ public class RequestServiceTest {
         point.setLongitude(1.1);
         point.setLatitude(1.1);
         getCurrRequest().setPoint(point);
+        getCurrRequest().setArchived(false);
+        getCurrRequest().setRequestChanges(new ArrayList<>());
     }
 
     private RequestDto getDto() {

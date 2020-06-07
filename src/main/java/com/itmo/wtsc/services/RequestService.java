@@ -1,6 +1,8 @@
 package com.itmo.wtsc.services;
 
 import com.itmo.wtsc.dto.RequestFilter;
+import com.itmo.wtsc.entities.RequestChange;
+import com.itmo.wtsc.repositories.RequestChangeRepository;
 import com.itmo.wtsc.utils.ErrorMessages;
 import com.itmo.wtsc.dto.RequestDto;
 import com.itmo.wtsc.entities.Point;
@@ -36,13 +38,19 @@ public class RequestService {
 
     private final RequestRepository requestRepository;
     private final PointRepository pointRepository;
+    private final RequestChangeRepository requestChangeRepository;
     private final UserService userService;
     private final GeoService geoService;
 
     @Autowired
-    public RequestService(RequestRepository requestRepository, PointRepository pointRepository, UserService userService, GeoService geoService) {
+    public RequestService(RequestRepository requestRepository,
+                          PointRepository pointRepository,
+                          RequestChangeRepository requestChangeRepository,
+                          UserService userService,
+                          GeoService geoService) {
         this.requestRepository = requestRepository;
         this.pointRepository = pointRepository;
+        this.requestChangeRepository = requestChangeRepository;
         this.userService = userService;
         this.geoService = geoService;
     }
@@ -56,6 +64,7 @@ public class RequestService {
         request.setUser(user);
         request.setStatus(RequestStatus.WAITING);
         request.setCreatedWhen(LocalDateTime.now());
+        request.setArchived(false);
         pointRepository.save(point);
         requestRepository.save(request);
         return getRequestDto(request, request.getPoint());
@@ -64,7 +73,7 @@ public class RequestService {
     public RequestDto updateRequest(RequestDto requestDto) {
         User user = userService.getAuthenticatedUser();
         Integer id = requestDto.getId();
-        Request request = requestRepository.findById(id)
+        Request request = requestRepository.findByIdAndArchivedIsFalse(id)
                 .orElseThrow(() -> new DataNotFoundException(String.format(ErrorMessages.REQUEST_NOT_FOUND_ERROR, id)));
 
         switch (user.getRole()) {
@@ -79,7 +88,16 @@ public class RequestService {
                 break;
             case VOLUNTEER:
                 validateStatusChange(request.getStatus(), requestDto.getStatus());
+                RequestChange requestChange = new RequestChange();
+                requestChange.setFrom(request.getStatus());
                 request.setStatus(requestDto.getStatus());
+                requestChange.setTo(requestDto.getStatus());
+                requestChange.setUpdatedWhen(LocalDateTime.now());
+                requestChange.setRequest(request);
+                if (requestChange.getTo().equals(requestChange.getFrom())) {
+                    break;
+                }
+                requestChangeRepository.save(requestChange);
                 break;
         }
         requestRepository.save(request);
@@ -93,7 +111,7 @@ public class RequestService {
             userPredicate = request -> user.getId().equals(request.getUser().getId());
             filter.setStatuses(Arrays.asList(RequestStatus.WAITING, RequestStatus.IN_PROGRESS));
         }
-        return requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetween(
+        return requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndAndArchivedIsFalse(
                 filter.getStatuses(), filter.getTypes(), filter.getMaxSize(), filter.getStartTime(), filter.getEndTime())
                 .stream()
                 .filter(userPredicate)
@@ -103,14 +121,19 @@ public class RequestService {
 
     public void deleteRequest(Integer id) {
         User user = userService.getAuthenticatedUser();
-        Request request = requestRepository.findById(id)
+        Request request = requestRepository.findByIdAndArchivedIsFalse(id)
                 .orElseThrow(() -> new DataNotFoundException(String.format(ErrorMessages.REQUEST_NOT_FOUND_ERROR, id)));
         if (user.getRequests().stream().noneMatch(req -> req.getId().equals(id))) {
             throw new DataNotFoundException(String.format(ErrorMessages.REQUEST_NOT_FOUND_ERROR, id));
         }
         validateTouristCanChangeRequest(request.getStatus());
-        pointRepository.deleteById(request.getPoint().getId());
-        requestRepository.deleteById(id);
+        if (request.getRequestChanges().isEmpty()) {
+            pointRepository.deleteById(request.getPoint().getId());
+            requestRepository.deleteById(id);
+            return;
+        }
+        request.setArchived(true);
+        requestRepository.save(request);
     }
 
     private void validateStatusChange(RequestStatus source, RequestStatus destination) {
@@ -130,7 +153,7 @@ public class RequestService {
     private void validateCoordinates(Double latitude, Double longitude) {
         geoService.validateCoordinates(latitude, longitude);
         List<Request> requests = requestRepository
-                .findRequestByStatusIn(Arrays.asList(RequestStatus.WAITING, RequestStatus.IN_PROGRESS));
+                .findRequestByStatusInAndArchivedIsFalse(Arrays.asList(RequestStatus.WAITING, RequestStatus.IN_PROGRESS));
         requests.stream()
                 .filter(req -> geoService.isRadiusIntersecting(latitude, longitude, req.getPoint().getLatitude(),
                         req.getPoint().getLongitude()))
