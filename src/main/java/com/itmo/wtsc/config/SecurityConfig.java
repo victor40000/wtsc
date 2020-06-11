@@ -42,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAnyAuthority(VOLUNTEER.toString())
                 .antMatchers("/statistic")
                     .hasAnyAuthority(VOLUNTEER.toString())
+                .antMatchers("/statistic/requestChanges")
+                    .hasAnyAuthority(VOLUNTEER.toString())
                 .antMatchers("/user_management")
                     .hasAnyAuthority(ADMIN.toString())
                 .antMatchers(HttpMethod.GET, "/requests")

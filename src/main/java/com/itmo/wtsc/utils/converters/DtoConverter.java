@@ -1,9 +1,11 @@
 package com.itmo.wtsc.utils.converters;
 
+import com.itmo.wtsc.dto.RequestChangeDto;
 import com.itmo.wtsc.dto.RequestDto;
 import com.itmo.wtsc.dto.UserDto;
 import com.itmo.wtsc.entities.Point;
 import com.itmo.wtsc.entities.Request;
+import com.itmo.wtsc.entities.RequestChange;
 import com.itmo.wtsc.entities.User;
 
 public class DtoConverter {
@@ -44,5 +46,15 @@ public class DtoConverter {
         userDto.setActive(user.isActive());
         userDto.setEmail(user.getEmail());
         return userDto;
+    }
+
+    public static RequestChangeDto getRequestChangeDto(RequestChange requestChange) {
+        RequestChangeDto requestChangeDto = new RequestChangeDto();
+        requestChangeDto.setId(requestChange.getId());
+        requestChangeDto.setFrom(requestChange.getFrom());
+        requestChangeDto.setTo(requestChange.getTo());
+        requestChangeDto.setUpdatedWhen(requestChange.getUpdatedWhen());
+        requestChangeDto.setRequest(getRequestDto(requestChange.getRequest(), requestChange.getRequest().getPoint()));
+        return requestChangeDto;
     }
 }

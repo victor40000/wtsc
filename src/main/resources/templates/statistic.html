@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
             integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
             crossorigin=""></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@js-joda/core@1.11.0/dist/js-joda.js"></script>
 
 </head>
 <body>
@@ -53,53 +55,6 @@
     </div>
 </nav>
 
-<!--<div class="container-fluid" style="font-size: 150%">
-    <div class="box">
-        <form>
-            <div class="form-group row">
-                <h2 class="intro-text text-center">Garbage collection request</h2>
-
-                <br>
-                <div class="col-sm-7 text-center">
-                    <div class="form-group col">
-                        <input type="text" readonly class="form-control-plaintext" id="latitude" value="Latitude">
-                        <input type="text" readonly class="form-control-plaintext" id="longitude" value="Longitude">
-                        <input type="text" hidden class="form-control-plaintext" id="requestId" value="0">
-                    </div>
-                    <br/>
-                    <div id="map" style="height: 400px;"></div>
-                </div>
-
-                <div class="col-sm-4 text-left" id="controlLayer">
-                    <div class="row">
-                        <button type="button" class="btn-lg btn-primary mb-2" id="submit" onclick="postPoint()">Submit
-                        </button>
-                        <button type="button" class="btn-lg btn-primary mb-2" id="update" onclick="updatePoint()">Update
-                        </button>
-                        <button type="button" class="btn-lg btn-primary mb-2" id="delete" onclick="deletePoint()">Delete
-                        </button>
-                        <button type="button" class="btn-lg btn-primary mb-2" id="cancel" onclick="onCancel()">Cancel
-                        </button>
-                    </div>
-                    <br/>
-                    <div class="row">
-                        <label for="type">Dump type</label>
-                        <select id="type" class="form-control input-lg">
-                            <option selected>MIXED</option>
-                            <option>SOLID</option>
-                        </select>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <label for="size">Dump size in packages</label>
-                        <input type="text" class="form-control input-lg" id="size" placeholder="1" value="1">
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>-->
-
 <div class="container-fluid" style="font-size: 150%">
     <div class="box">
         <form>
@@ -122,39 +77,6 @@
                         <div class="tab-pane fade in active" style="margin-top: 25px">
 
                             <div class="form-group row">
-                                <label class="col-sm-5">Dump type</label>
-                                <div class="col-sm-7">
-                                    <select id="dumpType" class="form-control input-lg">
-                                        <option selected>ALL</option>
-                                        <option>MIXED</option>
-                                        <option>SOLID</option>
-                                        <option>HOUSEHOLD</option>
-                                        <option>LIQUID</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="col-sm-5">Max dump size</label>
-                                <div class="col-sm-7">
-                                    <input type="text" class="form-control input-lg" id="dumpMaxSize" placeholder="none" value="100">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <label class="col-sm-5">Dump Status</label>
-                                <div class="col-sm-7">
-                                    <select id="dumpStatus" class="form-control input-lg">
-                                        <option selected>ALL</option>
-                                        <option>WAITING</option>
-                                        <option>IN_PROGRESS</option>
-                                        <option>COMPLETED</option>
-                                        <option>CANCELLED</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
                                 <label class="col-sm-5">Start date</label>
                                 <div class="col-sm-7">
                                     <input type="datetime-local" class="form-control input-lg" id="startDate" placeholder="none" value="2017-06-01T08:30">
@@ -169,51 +91,40 @@
                             </div>
 
                             <div class="form-group row text-center" style="margin-top: 25px">
-                                <button type="button" class="btn-lg btn-primary mb-3" onclick="getPoints()">Get dumps
-                                </button>
-                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onClear()">Clear
+                                <button type="button" class="btn-lg btn-primary mb-3" onclick="getChanges()">Get Changes
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-content" id="panel2" style="display: none">
-                        <div class="tab-pane fade in active" style="margin-top: 25px">
-                            <div class="row">
-                                <label class="col-sm-5">Dump Status</label>
-                                <div class="col-sm-7">
-                                    <select id="type_upd" class="form-control input-lg">
-                                        <option selected>WAITING</option>
-                                        <option>IN_PROGRESS</option>
-                                        <option>COMPLETED</option>
-                                        <option>CANCELLED</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row" style="margin-top: 25px">
-                                <button type="button" class="btn-lg btn-primary mb-3" onclick="updatePoint()">Update request
-                                </button>
-                                <button type="button" class="btn-lg btn-primary mb-3" onclick="onCancel()">Cancel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-<div class="container-fluid">
+<div class="container-fluid" style="font-size: 150%">
     <div class="box">
-        <textarea readonly class="form-control rounded-0" id="answer" rows="5"
-                  placeholder="Answer information"></textarea>
-        <button type="button" class="btn btn-primary mb-2" id="clearLog" onclick="onClearLog()">Clear</button>
+        <form>
+            <div class="form-group col">
+                <h3 class="intro-text text-center">Request Changes:
+                </h3>
+                <br>
+                <p id="showData" class="table"></p>
+            </div>
+        </form>
     </div>
+</div>
+<div class="container-fluid" style="font-size: 150%">
+    <div id="barchart" style="width: 90vw; height: 500px;"> </div>
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script type="text/javascript">
 
+    google.charts.load('current', {'packages':['bar']});
+    var LocalDateTime = JSJoda.LocalDateTime;
+    var LocalDate = JSJoda.LocalDate;
     // Create map
     var map = L.map('map').setView([61.2302, 30.0495], 13);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -233,200 +144,79 @@
     // Get interface elements
     var longitude = document.getElementById('longitude');
     var latitude = document.getElementById('latitude');
-    var dumpType = document.getElementById('dumpType');
-    var dumpStatus = document.getElementById('dumpStatus');
-    var dumpSize = document.getElementById('dumpMaxSize');
-    var submitButton = document.getElementById('submit');
-    var cancelButton = document.getElementById('cancel');
-    var updateButton = document.getElementById('update');
-    var deleteButton = document.getElementById('delete');
-    var answer = document.getElementById('answer');
     var requestId = document.getElementById('requestId');
-    var enableTap = true;
     var updPanel = document.getElementById('panel2');
     var getPanel = document.getElementById('panel1');
-    var updStatus = document.getElementById('type_upd');
     var startDate = document.getElementById('startDate');
     var endDate = document.getElementById('endDate');
 
-    function setUpdEnabled(status) {
-        if (status == true) {
-            updPanel.style.display = "inline";
-            getPanel.style.display = "none";
-        } else {
-            getPanel.style.display = "inline";
-            updPanel.style.display = "none";
-        }
-    }
-
-    // Function to lock/unlock control page elements
-    function setControlEnabled(status) {
-        if (status == true) {
-            dumpSize.disabled = false;
-            dumpType.disabled = false;
-            submitButton.style.display = "inline";
-            cancelButton.style.display = "inline";
-        } else {
-            dumpSize.disabled = true;
-            dumpType.disabled = true;
-            submitButton.style.display = "none";
-            cancelButton.style.display = "none";
-        }
-    }
-
-    function setUpdateControlEnabled(status) {
-        if (status == true) {
-            dumpSize.disabled = false;
-            dumpType.disabled = false;
-            updateButton.style.display = "inline";
-            deleteButton.style.display = "inline";
-            cancelButton.style.display = "inline";
-        } else {
-            dumpSize.disabled = true;
-            dumpType.disabled = true;
-            updateButton.style.display = "none";
-            deleteButton.style.display = "none";
-            cancelButton.style.display = "none";
-        }
-    }
-
-    // setControlEnabled(false);
-    // setUpdateControlEnabled(false);
-
-    // Function to lock/unlock map
-    function setMapEnabled(status) {
-        if (status == true) {
-
-            map.dragging.enable();
-            map.touchZoom.enable();
-            map.doubleClickZoom.enable();
-            map.scrollWheelZoom.enable();
-            map.boxZoom.enable();
-            map.keyboard.enable();
-            enableTap = true;
-
-            latitude.disabled = false;
-            longitude.disabled = false;
-        } else {
-
-            map.dragging.disable();
-            map.touchZoom.disable();
-            map.doubleClickZoom.disable();
-            map.scrollWheelZoom.disable();
-            map.boxZoom.disable();
-            map.keyboard.disable();
-            enableTap = false;
-
-            latitude.disabled = true;
-            longitude.disabled = true;
-        }
-    }
-
-    function printAnswer(value) {
-        answer.value = answer.value + '\n' + value;
-        answer.scrollTop = answer.scrollHeight;
-    }
-
-    function setDefaulValues() {
-        latitude.value = 'Latitude';
-        longitude.value = 'Longitude';
-    }
-
-    function onCancel() {
-        setUpdEnabled(false)
-        setMapEnabled(true);
-        blockMarkers = false;
-    }
-
-    function onClearLog() {
-        answer.value = '';
-        answer.scrollTop = answer.scrollHeight;
-    }
-
-    function onClear() {
-        requests = [];
-        markers = [];
+    function createMarker(request) {
+        markers = [];  //clear markers struct
         markerGroup.clearLayers();
+        markers[request.id] = L.marker([request.latitude, request.longitude]).addTo(markerGroup)
+            .bindPopup("<b>Request</b>"
+                + "<br/>Type: " + request.dumpType
+                + "<br/>Size: " + request.size
+                + "<br/>Status: " + request.status
+                + "<br/>Description: " + request.description)
+            .on('click', selectMarker);
     }
 
-    function selectMarker(e) {
+    function createTableFromJSON(myJson) {
 
-        if (!blockMarkers) {
-            var markerTempId = this._leaflet_id;
-            var objectId = -1;
-            markers.forEach(function (item, index, array) {
-                if (markerTempId == markers[index]._leaflet_id) {
-                    objectId = index;
+        var col = [];
+        for (var i = 0; i < myJson.length; i++) {
+            for (var key in myJson[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
                 }
-            });
-            if (objectId != -1) {
-                item = requests[objectId];
-                setUpdEnabled(true);
-                setMapEnabled(false);
-                blockMarkers = true;
-                requestId.value = item.id;
-                latitude.value = item.latitude;
-                longitude.value = item.longitude;
             }
-        } else {
-            alert('Please apply or cancel your order before select a new marker');
-            printAnswer('Please apply or cancel your order before select a new marker');
         }
+        console.log(col)
+        var table = document.createElement("table")
+        table.className = "table";
+        var tr = table.insertRow(-1);
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+        for (var i = 0; i < myJson.length; i++) {
+
+            tr = table.insertRow(-1);
+
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = tr.insertCell(-1);
+                if (col[j] === "request") {
+                    let item = myJson[i][col[j]];
+                    let btnActivate = document.createElement("BUTTON");
+                    btnActivate.textContent = myJson[i][col[j]].id;
+                    btnActivate.type = "button";
+                    btnActivate.style = "border: none; background-color: Transparent"
+                    btnActivate.onclick = function(){
+                        createMarker(item);
+                        return false;
+                    };
+                    console.log(item)
+                    tabCell.appendChild(btnActivate)
+                } else {
+                    tabCell.innerHTML = myJson[i][col[j]];
+                }
+
+
+            }
+        }
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
     }
 
-    var updatePoint = function () {
-        item = requests[requestId.value];
-        console.log(requestId.value);
-        console.log(requests);
-        $.ajax({
-            type: 'PUT',
-            url: '/requests/' + requestId.value,
-            data: JSON.stringify({
-                'status': updStatus.value,
-                'dumpType': item.dumpType,
-                'size': item.size
-            }),
-            contentType: 'application/json',
-            async: true,
-            success: function (result) {
-                printAnswer('Point was updated');
-                setUpdEnabled(false);
-                setMapEnabled(true);
-                markerGroup.clearLayers();
-                blockMarkers = false;
-                getPoints();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert('Cannot update dump. See error in log.');
-                printAnswer('Update dump error: ' +
-                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
-            }
-        });
-    }
-
-
-
-    var getPoints = function () {
-        var currStatus = dumpStatus.value;
-        var currType = dumpType.value;
-        if (currType === "ALL") {
-            console.log("curr type = all");
-            currType = undefined;
-            console.log(currType);
-        }
-        if (currStatus === "ALL") {
-            console.log("curr status = all");
-            currStatus = undefined;
-            console.log(currStatus);
-        }
+    function getChanges(){
         $.ajax({
             type: 'GET',
-            url: 'requests',
+            url: 'statistic/requestChanges',
             contentType: 'application/json',
             data: {
-                "dumpTypes": currType,
-                "statuses": currStatus,
-                "maxSize": dumpSize.value,
                 "startDate": startDate.value,
                 "endDate": endDate.value
             },
@@ -437,80 +227,70 @@
                 requests = [];
                 markers = [];  //clear markers struct
                 markerGroup.clearLayers();
-                result.forEach(function (item, index, array) {
-
-                    markers[item.id] = L.marker([item.latitude, item.longitude]).addTo(markerGroup)
-                        .bindPopup("<b>Dump point</b>"
-                            + "<br/>Type: " + item.dumpType
-                            + "<br/>Size: " + item.size
-                            + "<br/>Status: " + item.status
-                            + "<br/>Description: " + item.description)
-                        .on('click', selectMarker);
-                    requests[item.id] = item;
-                });
-                console.log(markers);
-                console.log(dumpSize.value);
+                console.log(result)
+                createTableFromJSON(result.requestChanges)
+                drawChart(result.requestChanges)
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                alert('Could not get dumps. See error in log.');
-                printAnswer('Get dumps error: ' +
-                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+                alert('Could not get changes: ' + jqXHR.responseText);
             }
         });
     }
 
-    getPoints();
+    function drawChart(jsonArray) {
+        /*var data = google.visualization.arrayToDataTable([
+            ['Year', 'Sales', 'Expenses', 'Profit'],
+            ['2015-01-01', 1000, 400, 200],
+            ['2015-01-03', 1170, 460, 250],
+            ['2015-01-30', 660, 1120, 300],
+            ['2015-01-20', 1030, 540, 350]
+        ]);*/
 
+        var data = google.visualization.arrayToDataTable(getData(jsonArray));
 
-    var menu_about = document.getElementById('menu_about');
-    var menu_request = document.getElementById('menu_request');
-    var menu_crewman = document.getElementById('menu_crewman');
-    var menu_statistics = document.getElementById('menu_statistics');
-
-    var menuManagement = function () {
-        $.ajax({
-            type: 'GET',
-            url: 'user_role/',
-            contentType: "application/json",
-            async: true,
-            success: function (result) {
-                role = result;
-                console.log(role);
-                if (role == 'TOURIST') {
-                    menu_about.style.visibility = "visible";
-                    menu_request.style.visibility = "visible";
-                    menu_crewman.style.visibility = "hidden";
-                    menu_statistics.style.visibility = "hidden";
-                } else if (role == 'CREWMAN') {
-                    menu_about.style.visibility = "visible";
-                    menu_request.style.visibility = "visible";
-                    menu_crewman.style.visibility = "visible";
-                    menu_statistics.style.visibility = "hidden";
-                } else if (role == 'ADMIN') {
-                    menu_about.style.visibility = "visible";
-                    // change link to align them
-                    menu_request.href = "statistics";
-                    menu_request.text = "statistics page";
-                    menu_request.style.visibility = "visible";
-                    menu_crewman.style.visibility = "hidden";
-                    menu_statistics.style.visibility = "hidden";
-                } else {
-                    menu_about.style.visibility = "visible";
-                    menu_request.style.visibility = "hidden";
-                    menu_crewman.style.visibility = "hidden";
-                    menu_statistics.style.visibility = "hidden";
-                }
+        var options = {
+            chart: {
+                title: 'Performance',
+                subtitle: 'Processed requests',
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log('Get sushi role error: ' +
-                    jqXHR.status + ' ' + jqXHR.responseText + ' ' + textStatus + ' ' + errorThrown);
+            bars: 'vertical' // Required for Material Bar Charts.
+        };
+
+
+
+        var chart = new google.charts.Bar(document.getElementById('barchart'));
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    function getData(jsonArray) {
+        const myMap = new Map();
+        jsonArray.forEach(function (item, index, array) {
+            console.log(item);
+            date = LocalDateTime.parse(item.updatedWhen).toLocalDate().toString();
+            let entry = myMap.get(date);
+            if (entry === undefined) {
+                entry = [0, 0, 0]
             }
+            if (item.to === "COMPLETED") {
+                entry[0] = entry[0] + 1;
+            }
+            if (item.to === "CANCELLED") {
+                entry[1] = entry[1] + 1;
+            }
+            if (item.to === "WAITING") {
+                entry[2] = entry[2] + 1;
+            }
+            myMap.set(date, entry)
         });
-    };
-
-    // menuManagement();
-
-
+        console.log(myMap);
+        result = [];
+        result.push(['Date', 'Completed', 'Cancelled', 'Waiting'])
+        myMap.forEach(function(value, key) {
+            result.push([key, value[0], value[1], value[2]])
+        });
+        console.log(result);
+        return result
+    }
 </script>
 
 </body>

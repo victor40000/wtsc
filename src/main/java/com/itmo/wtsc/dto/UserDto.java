@@ -1,5 +1,6 @@
 package com.itmo.wtsc.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.itmo.wtsc.dto.cases.NewUserCase;
 import com.itmo.wtsc.dto.cases.UpdateUserCase;
 import com.itmo.wtsc.utils.enums.UserRole;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import static com.itmo.wtsc.utils.ErrorMessages.*;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
 
     private Integer id;

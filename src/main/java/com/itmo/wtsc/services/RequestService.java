@@ -1,21 +1,20 @@
 package com.itmo.wtsc.services;
 
-import com.itmo.wtsc.dto.RequestFilter;
-import com.itmo.wtsc.entities.RequestChange;
-import com.itmo.wtsc.repositories.RequestChangeRepository;
-import com.itmo.wtsc.utils.ErrorMessages;
 import com.itmo.wtsc.dto.RequestDto;
+import com.itmo.wtsc.dto.RequestFilter;
 import com.itmo.wtsc.entities.Point;
 import com.itmo.wtsc.entities.Request;
+import com.itmo.wtsc.entities.RequestChange;
 import com.itmo.wtsc.entities.User;
-import com.itmo.wtsc.utils.exceptions.DataNotFoundException;
-import com.itmo.wtsc.utils.exceptions.ValidationException;
 import com.itmo.wtsc.repositories.PointRepository;
+import com.itmo.wtsc.repositories.RequestChangeRepository;
 import com.itmo.wtsc.repositories.RequestRepository;
+import com.itmo.wtsc.utils.ErrorMessages;
 import com.itmo.wtsc.utils.enums.RequestStatus;
 import com.itmo.wtsc.utils.enums.UserRole;
+import com.itmo.wtsc.utils.exceptions.DataNotFoundException;
+import com.itmo.wtsc.utils.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 import static com.itmo.wtsc.utils.ErrorMessages.REQUEST_ALREADY_EXISTS;
 import static com.itmo.wtsc.utils.converters.DtoConverter.*;
 
-@Service("bbb")
+@Service
 public class RequestService {
 
     private final Map<RequestStatus, List<RequestStatus>> statusTransitions = new HashMap<>() {{
