@@ -15,6 +15,7 @@ import com.itmo.wtsc.repositories.RequestRepository;
 import com.itmo.wtsc.utils.enums.RequestStatus;
 import com.itmo.wtsc.utils.enums.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 import static com.itmo.wtsc.utils.ErrorMessages.REQUEST_ALREADY_EXISTS;
 import static com.itmo.wtsc.utils.converters.DtoConverter.*;
 
-@Service
+@Service("bbb")
 public class RequestService {
 
     private final Map<RequestStatus, List<RequestStatus>> statusTransitions = new HashMap<>() {{
@@ -111,7 +112,7 @@ public class RequestService {
             userPredicate = request -> user.getId().equals(request.getUser().getId());
             filter.setStatuses(Arrays.asList(RequestStatus.WAITING, RequestStatus.IN_PROGRESS));
         }
-        return requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndAndArchivedIsFalse(
+        return requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndArchivedIsFalse(
                 filter.getStatuses(), filter.getTypes(), filter.getMaxSize(), filter.getStartTime(), filter.getEndTime())
                 .stream()
                 .filter(userPredicate)

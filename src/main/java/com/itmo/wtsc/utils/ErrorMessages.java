@@ -6,6 +6,7 @@ public interface ErrorMessages {
     String FIELD_NULL_ERROR = "Field shouldn't be null";
     String FIELD_BLANK_ERROR = "Field shouldn't be blank";
     String INVALID_SIZE_ERROR = "Size should be in range [1, 999]";
+    String INVALID_FORMAT_ERROR = "Field has invalid format";
     String TOO_LONG_DESCRIPTION_ERROR = "Description is too long";
 
     String REQUEST_NOT_FOUND_ERROR = "Request with id: %s not found";
@@ -17,4 +18,5 @@ public interface ErrorMessages {
     String COORDINATES_ON_WATER_ERROR = "Point with latitude: %s and longitude: %s is not located on land";
     String REQUEST_ALREADY_EXISTS = "Request for this dump already exists";
     String USER_ALREADY_REGISTERED = "User with login: %s already registered";
+    String ADMIN_COULD_NOT_BE_REGISTERED = "Could not register user with role ADMIN";
 }

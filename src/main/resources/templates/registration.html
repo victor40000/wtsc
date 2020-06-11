@@ -55,6 +55,7 @@
     var passw = document.getElementById("password")
     var passw_conf = document.getElementById("confirm_password")
     var role = document.getElementById("role")
+    var email = document.getElementById("email")
 
     var postUser = function () {
         if (passw.value !== passw_conf.value) {
@@ -67,7 +68,8 @@
                 data: JSON.stringify({
                     'login': login.value,
                     'password': passw.value,
-                    'role': role.value
+                    'role': role.value,
+                    'email': email.value
                 }),
                 success: function(result) {
                     window.location.replace("/login");

@@ -5,11 +5,11 @@ import com.itmo.wtsc.dto.cases.UpdateUserCase;
 import com.itmo.wtsc.utils.enums.UserRole;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.itmo.wtsc.utils.ErrorMessages.FIELD_BLANK_ERROR;
-import static com.itmo.wtsc.utils.ErrorMessages.FIELD_NULL_ERROR;
+import static com.itmo.wtsc.utils.ErrorMessages.*;
 
 @Data
 public class UserDto {
@@ -27,4 +27,8 @@ public class UserDto {
 
     @NotNull(groups = {UpdateUserCase.class}, message = FIELD_NULL_ERROR)
     private boolean active;
+
+    @NotBlank(groups = {NewUserCase.class}, message = FIELD_BLANK_ERROR)
+    @Email(groups = {NewUserCase.class}, message = INVALID_FORMAT_ERROR)
+    private String email;
 }

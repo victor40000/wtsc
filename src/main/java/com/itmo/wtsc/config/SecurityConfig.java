@@ -14,8 +14,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import javax.sql.DataSource;
 
-import static com.itmo.wtsc.utils.enums.UserRole.TOURIST;
-import static com.itmo.wtsc.utils.enums.UserRole.VOLUNTEER;
+import static com.itmo.wtsc.utils.enums.UserRole.*;
 
 @Configuration
 @EnableWebSecurity
@@ -44,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/statistic")
                     .hasAnyAuthority(VOLUNTEER.toString())
                 .antMatchers("/user_management")
-                    .hasAnyAuthority(VOLUNTEER.toString())
+                    .hasAnyAuthority(ADMIN.toString())
                 .antMatchers(HttpMethod.GET, "/requests")
                     .hasAnyAuthority(TOURIST.toString(), VOLUNTEER.toString())
                 .antMatchers(HttpMethod.POST, "/requests")
@@ -54,9 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/requests/*")
                     .hasAnyAuthority(TOURIST.toString())
                 .antMatchers(HttpMethod.PUT, "/users/*")
-                    .hasAnyAuthority(VOLUNTEER.toString())
-                .antMatchers(HttpMethod.GET, "/users/*")
-                    .hasAnyAuthority(VOLUNTEER.toString())
+                    .hasAnyAuthority(ADMIN.toString())
+                .antMatchers(HttpMethod.GET, "/users")
+                    .hasAnyAuthority(ADMIN.toString())
                 .antMatchers("/css/**", "/fonts/**", "/img/**", "/js/**", "/index", "/registration").permitAll()
                 .anyRequest().authenticated().
                 and()

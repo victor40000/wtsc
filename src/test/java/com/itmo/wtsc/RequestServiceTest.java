@@ -84,7 +84,7 @@ public class RequestServiceTest {
         when(geoService.isLand(any(), any())).thenReturn(true);
         when(userService.getAuthenticatedUser()).thenReturn(getAuthUser());
         when(requestRepository.findByIdAndArchivedIsFalse(any())).thenReturn(Optional.of(getCurrRequest()));
-        when(requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndAndArchivedIsFalse(any(), any(), any(), any(), any()))
+        when(requestRepository.findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndArchivedIsFalse(any(), any(), any(), any(), any()))
                 .thenReturn(getRequestTestList());
         when(pointRepository.save(any(Point.class))).thenAnswer(elem -> {
             Point point = (Point) elem.getArgument(0);

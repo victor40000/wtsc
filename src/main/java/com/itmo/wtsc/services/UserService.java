@@ -4,6 +4,7 @@ import com.itmo.wtsc.dto.UserDto;
 import com.itmo.wtsc.entities.User;
 import com.itmo.wtsc.repositories.UserRepository;
 import com.itmo.wtsc.utils.ErrorMessages;
+import com.itmo.wtsc.utils.converters.DtoConverter;
 import com.itmo.wtsc.utils.enums.UserRole;
 import com.itmo.wtsc.utils.exceptions.ValidationException;
 import lombok.Getter;
@@ -18,8 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.itmo.wtsc.utils.ErrorMessages.USER_ALREADY_REGISTERED;
-import static com.itmo.wtsc.utils.ErrorMessages.USER_NOT_FOUND_ERROR;
+import static com.itmo.wtsc.utils.ErrorMessages.*;
 import static com.itmo.wtsc.utils.enums.UserRole.TOURIST;
 
 @Service
@@ -42,25 +42,29 @@ public class UserService {
         if (user != null) {
             throw new ValidationException(String.format(USER_ALREADY_REGISTERED, userDto.getLogin()));
         }
+        if (UserRole.ADMIN.equals(userDto.getRole())) {
+            throw new ValidationException(ADMIN_COULD_NOT_BE_REGISTERED);
+        }
         user = new User();
         user.setLogin(userDto.getLogin());
         user.setPassword(getEncoder().encode(userDto.getPassword()));
         user.setRole(userDto.getRole());
         user.setActive(TOURIST.equals(user.getRole()));
+        user.setEmail(userDto.getEmail());
         userRepository.save(user);
     }
 
     public List<UserDto> getUsers() {
         return userRepository.findAll().stream()
                 .filter(user -> !Objects.equals(user.getId(), getAuthenticatedUser().getId()))
-                .map(this::getUserDto)
+                .map(DtoConverter::getUserDto)
                 .collect(Collectors.toList());
     }
 
     public void changeUserStatus(UserDto userDto) {
         User user = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new ValidationException(String.format(USER_NOT_FOUND_ERROR, userDto.getId())));
-        if (Objects.equals(user.getId(), getAuthenticatedUser().getId())) {
+        if (UserRole.ADMIN.equals(user.getRole())) {
             throw new ValidationException(String.format(USER_NOT_FOUND_ERROR, userDto.getId()));
         }
         user.setActive(userDto.isActive());
@@ -80,14 +84,5 @@ public class UserService {
             throw new RuntimeException("Couldn't find authenticated user");
         }
         return user;
-    }
-
-    private UserDto getUserDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setLogin(user.getLogin());
-        userDto.setId(user.getId());
-        userDto.setRole(user.getRole());
-        userDto.setActive(user.isActive());
-        return userDto;
     }
 }

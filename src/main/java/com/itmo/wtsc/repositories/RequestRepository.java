@@ -17,7 +17,7 @@ public interface RequestRepository extends CrudRepository<Request, Integer> {
 
     List<Request> findAllByArchivedIsFalse();
 
-    List<Request> findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndAndArchivedIsFalse(
+    List<Request> findRequestsByStatusInAndDumpTypeInAndSizeLessThanEqualAndCreatedWhenBetweenAndArchivedIsFalse(
             List<RequestStatus> statuses,
             List<DumpType> types,
             Integer maxSize,
