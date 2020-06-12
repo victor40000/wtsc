@@ -3,6 +3,7 @@ package com.itmo.wtsc.controller;
 import com.itmo.wtsc.dto.UserDto;
 import com.itmo.wtsc.dto.cases.NewUserCase;
 import com.itmo.wtsc.dto.cases.UpdateUserCase;
+import com.itmo.wtsc.entities.ConfirmationToken;
 import com.itmo.wtsc.repositories.UserRepository;
 import com.itmo.wtsc.services.UserService;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -58,5 +60,19 @@ public class UserController {
     @Transactional
     public List<UserDto> getUsers() {
         return userService.getUsers();
+    }
+
+    @RequestMapping(value="/confirm", method= {RequestMethod.GET, RequestMethod.POST})
+    @Transactional
+    public ModelAndView confirmUserAccount(ModelAndView modelAndView, @RequestParam("token")String confirmationToken)
+    {
+        boolean result = getUserService().confirmUserEmail(confirmationToken);
+        if (result) {
+            modelAndView.setViewName("accountVerified");
+        } else {
+            modelAndView.addObject("message","The link is invalid or broken!");
+            modelAndView.setViewName("error");
+        }
+        return modelAndView;
     }
 }

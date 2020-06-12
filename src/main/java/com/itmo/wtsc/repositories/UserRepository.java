@@ -9,6 +9,8 @@ public interface UserRepository extends CrudRepository<User, Integer> {
 
     User getUserByLoginIs(String login);
 
+    User getUserByEmailIs(String email);
+
     @Override
     List<User> findAll();
 }

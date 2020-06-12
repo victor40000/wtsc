@@ -11,12 +11,13 @@ public interface ErrorMessages {
 
     String REQUEST_NOT_FOUND_ERROR = "Request with id: %s not found";
     String USER_NOT_FOUND_ERROR = "User with id: %s not found";
+    String ACCOUNT_NOT_ACTIVATED = "User with id: %s didn't verify email";
     String INVALID_STATUS_TRANSITION_ERROR = "Request with status: %s couldn't be shifted to status: %s";
     String UNCHANGEABLE_REQUEST_ERROR = "Couldn't change request with status: %s";
     String COULD_NOT_DELETE_REQUEST_ERROR = "Couldn't change request with status: %s";
     String COORDINATES_NOT_IN_NATIONAL_PARK_ERROR = "Point with latitude: %s and longitude: %s is not located in national park";
     String COORDINATES_ON_WATER_ERROR = "Point with latitude: %s and longitude: %s is not located on land";
     String REQUEST_ALREADY_EXISTS = "Request for this dump already exists";
-    String USER_ALREADY_REGISTERED = "User with login: %s already registered";
+    String USER_ALREADY_REGISTERED = "User: %s already registered";
     String ADMIN_COULD_NOT_BE_REGISTERED = "Could not register user with role ADMIN";
 }

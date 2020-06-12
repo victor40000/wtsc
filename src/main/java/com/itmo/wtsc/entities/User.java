@@ -32,4 +32,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Collection<Request> requests;
+
+    @OneToOne(mappedBy = "user")
+    private ConfirmationToken token;
 }
