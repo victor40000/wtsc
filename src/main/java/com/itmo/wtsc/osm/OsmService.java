@@ -1,10 +1,14 @@
 package com.itmo.wtsc.osm;
 
+import com.itmo.wtsc.dto.integration.osm.AreaDto;
+import com.itmo.wtsc.dto.integration.osm.GetAreasResponseDto;
 import com.itmo.wtsc.services.GeoService;
-import com.itmo.wtsc.utils.ErrorMessages;
 import com.itmo.wtsc.utils.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigInteger;
+import java.util.List;
 
 import static com.itmo.wtsc.utils.ErrorMessages.COORDINATES_NOT_IN_NATIONAL_PARK_ERROR;
 import static com.itmo.wtsc.utils.ErrorMessages.COORDINATES_ON_WATER_ERROR;
@@ -14,6 +18,8 @@ public class OsmService implements GeoService {
 
     public static final String LAKE_KEY = "Ladoga";
     public static final String NATIONAL_PARK_KEY = "Laatokan saariston kansallispuisto";
+    public static final BigInteger LADOGA_ID = new BigInteger("3601754729");
+    public static final BigInteger NATIONAL_PARK_ID = new BigInteger("3608285930");
     private final OsmRestClient restClient;
 
     @Autowired
@@ -23,25 +29,29 @@ public class OsmService implements GeoService {
 
     @Override
     public void validateCoordinates(Double latitude, Double longitude) {
-        String areas = restClient.getAreas(latitude, longitude);
-        if (!areas.contains(NATIONAL_PARK_KEY)) {
+        AreaDto lake = new AreaDto();
+        AreaDto park = new AreaDto();
+        lake.setId(LADOGA_ID);
+        park.setId(NATIONAL_PARK_ID);
+        List<AreaDto> areas = restClient.getAreas(latitude, longitude).getAreas();
+        if (!areas.contains(park)) {
             throw new ValidationException(String.format(COORDINATES_NOT_IN_NATIONAL_PARK_ERROR,
                     latitude, longitude));
         }
-        if (areas.contains(LAKE_KEY)) {
+        if (areas.contains(lake)) {
             throw new ValidationException(String.format(COORDINATES_ON_WATER_ERROR, latitude, longitude));
         }
     }
 
     @Override
     public boolean isLand(Double latitude, Double longitude) {
-        String areas = restClient.getAreas(latitude, longitude);
+        String areas = restClient.getAreasTest(latitude, longitude);
         return !areas.contains(LAKE_KEY);
     }
 
     @Override
     public boolean isNationalPark(Double latitude, Double longitude) {
-        String areas = restClient.getAreas(latitude, longitude);
+        String areas = restClient.getAreasTest(latitude, longitude);
         return areas.contains(NATIONAL_PARK_KEY);
     }
 
